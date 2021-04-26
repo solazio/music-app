@@ -1,0 +1,9 @@
+export const feedSelector = (state) => state.feed;
+export const hasMoreSlector = (state) => state.hasMore;
+export const pageSelector = (state) => state.page;
+export const searchTypeSelector = (state) => state.searchType;
+export const isLoadingSelector = (state) => state.isLoading;
+export const isFetchingSelector = (state) => state.isFetching;
+export const isErrorSelector = (state) => state.isError;
+export const searchTermSelector = (state) => state.searchTerm;
+export const favouritesSelector = (state) => state.favourites;

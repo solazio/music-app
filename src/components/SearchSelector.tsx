@@ -1,14 +1,12 @@
 import { useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux'
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import AlbumIcon from '@material-ui/icons/Album';
 import PersonIcon from '@material-ui/icons/Person';
 import MusicNoteIcon from '@material-ui/icons/MusicNote';
-
-interface Props {
-  searchType: string,
-  onSearchTypeChange: (enity: string) => void
-}
+import { changeSearchType } from "../store/actionCreators";
+import { searchTypeSelector } from '../store/selectors';
 
 const tabs = [
   {
@@ -28,15 +26,18 @@ const tabs = [
   },
 ];
 
-const SearchSelector: React.FC<Props> = ({ searchType, onSearchTypeChange }) => {
+const SearchSelector = () => {
+  const dispatch = useDispatch();
+  const searchType = useSelector(searchTypeSelector);
   const tabValue = useMemo(() => tabs.findIndex(tab => tab.searchType === searchType), [searchType]);
 
+
   const handleChange = (e: React.ChangeEvent<{}>, newValue: number) => {
-    onSearchTypeChange(tabs[newValue].searchType)
+    dispatch(changeSearchType(tabs[newValue].searchType));
   };
 
   return (
-    <Tabs value={tabValue} onChange={handleChange} centered>
+    <Tabs indicatorColor="primary" value={tabValue} onChange={handleChange} centered>
       {
         tabs.map(tab => (
           <Tab key={tab.label} icon={<tab.Icon />} label={tab.label} />

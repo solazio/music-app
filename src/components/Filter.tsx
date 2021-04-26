@@ -1,24 +1,27 @@
-import { ChangeEvent, KeyboardEvent, useState } from "react"
+import { ChangeEvent, useCallback, useState } from "react"
+import { useSelector, useDispatch } from 'react-redux'
 import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
 import SearchIcon from '@material-ui/icons/Search';
+import { changeSearchTerm } from "../store/actionCreators";
+import { searchTermSelector } from '../store/selectors';
+import debounce from 'lodash.debounce';
 
-interface Props {
-  onSearch: (term: string) => void,
-}
+const Filter = () => {
+  const dispatch = useDispatch();
+  const searchTerm = useSelector(searchTermSelector);
+  const [value, setValue] = useState(searchTerm);
 
-const Filter: React.FC<Props> = ({ onSearch }) => {
-  const [searchTerm, setSearchTerm] = useState<string>("")
+  const handleSearch = useCallback(
+    debounce((value: string) => {
+      dispatch(changeSearchTerm(value));
+    }, 500),
+    []
+  );
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
-  };
-
-  const handleKeypress = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      onSearch(searchTerm);
-      setSearchTerm("")
-    }
+    setValue(e.target.value);
+    handleSearch(e.target.value)
   };
 
   return (
@@ -27,9 +30,8 @@ const Filter: React.FC<Props> = ({ onSearch }) => {
         variant="outlined"
         fullWidth
         placeholder={`Search something`}
-        value={searchTerm}
+        value={value}
         onChange={handleChange}
-        onKeyPress={handleKeypress}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">

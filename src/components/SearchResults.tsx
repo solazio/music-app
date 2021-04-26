@@ -1,11 +1,18 @@
-import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import List from "@material-ui/core/List";
 import Box from "@material-ui/core/Box";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 import FeedListItem from "./FeedListItem"
-import fetchData from "../api/fetchData";
 import useInfiniteScroll from "../hooks/useInfiniteScroll"
+import { changePage } from "../store/actionCreators";
+import {
+  feedSelector,
+  isLoadingSelector,
+  isErrorSelector,
+  pageSelector,
+  hasMoreSlector,
+} from "../store/selectors";
 
 export interface FeedDataObject {
   kind: string,
@@ -18,53 +25,22 @@ export interface FeedDataObject {
   artworkUrl100: string,
 }
 
-interface Props {
-  searchTerm: string,
-  searchType: string
-}
-
-const SearchResults: React.FC<Props> = ({ searchTerm, searchType }) => {
-  const [feed, setFeed] = useState<Array<FeedDataObject>>([]);
-  const [isFetching, setIsFetching] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [hasMore, setHasMore] = useState(true)
-  const [isError, setIsError] = useState(false)
-  const [page, setPage] = useState(0);
-
-  const loadMoreItems = () => {
-    setIsFetching(true)
-    setPage((prevPageNumber) => prevPageNumber + 1)
-    fetchData(searchTerm, searchType, page).then(({ results }) => {
-      setFeed([...feed, ...results])
-      setIsFetching(false)
-      if (results.length < 10) {
-        setHasMore(false)
-      }
-    }).catch(err => {
-      console.log(err)
-      setHasMore(true)
-    })
-  }
+const SearchResults = () => {
+  const dispatch = useDispatch();
+  const feed = useSelector(feedSelector);
+  const isLoading = useSelector(isLoadingSelector);
+  const isError = useSelector(isErrorSelector);
+  const hasMore = useSelector(hasMoreSlector);
+  const page = useSelector(pageSelector);
 
   const [lastElementRef] = useInfiniteScroll(
-    loadMoreItems,
-    isFetching
-  );
-
-  useEffect(() => {
-    setIsLoading(true)
-    setIsError(false)
-    fetchData(searchTerm, searchType, 0).then(({ results }) => {
-      setFeed(results)
-      setIsLoading(false)
-      if (results.length < 10) {
-        setHasMore(false)
+    () => {
+      if (hasMore) {
+        dispatch(changePage(page + 1))
       }
-    }).catch(err => {
-      console.log(err)
-      setIsError(true)
-    })
-  }, [searchTerm, searchType])
+    },
+    isLoading
+  );
 
   if (isLoading) {
     if (isError) {

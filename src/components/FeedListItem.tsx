@@ -25,7 +25,7 @@ const FeedListItem: React.FC<Props> = ({
             <Avatar alt="" src={artworkUrl100} />
           </ListItemAvatar>
           <ListItemText primary={trackName} secondary={artistName}></ListItemText>
-          <ListItemSecondaryAction style={{ top: "28px" }}>
+          <ListItemSecondaryAction style={{ top: "48px" }}>
             <ListItemText secondary={collectionName}></ListItemText>
           </ListItemSecondaryAction>
         </Grid>

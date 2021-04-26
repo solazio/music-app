@@ -6,6 +6,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+### `npm run start-server`
+
+Runs the server port 3001.
+
 ### `npm start`
 
 Runs the app in the development mode.\

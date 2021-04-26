@@ -1,21 +1,26 @@
-import { useState } from "react"
+import { useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux";
 import Box from "@material-ui/core/Box";
 import Filter from "./Filter";
 import SearchResults from "./SearchResults";
 import TopBar from "./TopBar";
 import SearchSelector from "./SearchSelector"
+import { loadFeed } from "../store/actionCreators";
+import {
+  searchTermSelector,
+  searchTypeSelector,
+  pageSelector,
+} from "../store/selectors";
 
 const App = () => {
-  const [searchTerm, setSearchTerm] = useState("pink floyd")
-  const [searchType, setSearchType] = useState("song")
+  const dispatch = useDispatch();
+  const page = useSelector(pageSelector);
+  const searchTerm = useSelector(searchTermSelector);
+  const searchType = useSelector(searchTypeSelector);
 
-  const handleSearch = (term: string) => {
-    setSearchTerm(term)
-  }
-
-  const handleSearchTypeChange = (searchType: string) => {
-    setSearchType(searchType)
-  }
+  useEffect(() => {
+    dispatch(loadFeed(searchTerm, searchType, page))
+  }, [dispatch, searchTerm, searchType, page]);
 
   return (
     <Box flex={1} display='flex' flexDirection='column' alignItems='center'>
@@ -29,10 +34,10 @@ const App = () => {
         marginBottom={8}
         paddingLeft={2}>
         <Box paddingBottom={1}>
-          <Filter onSearch={handleSearch} />
+          <Filter />
         </Box>
-        <SearchSelector searchType={searchType} onSearchTypeChange={handleSearchTypeChange} />
-        <SearchResults searchTerm={searchTerm} searchType={searchType} />
+        <SearchSelector />
+        <SearchResults />
       </Box>
     </Box>
   );
